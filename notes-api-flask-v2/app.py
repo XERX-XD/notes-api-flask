@@ -68,6 +68,14 @@ def update(noteid):
         db.session.commit()
         return jsonify({"status":"updated","updated_value":{"id":note.id,"title":note.title,"done":note.done}})
     return jsonify({"Status":f" note id {noteid} not found in database"}),404
+
+@app.route("/notes/<int:noteid>",methods=["GET"])
+@jwt_required()
+def getsingle(noteid):
+    note = Note.query.get(noteid)
+    if note:
+        return jsonify({"id":note.id,"title":note.title,"done":note.done})
+    return jsonify({"Status":f" note id {noteid} not found in database"}),404
 with app.app_context():
     db.create_all()
 if __name__=="__main__":
