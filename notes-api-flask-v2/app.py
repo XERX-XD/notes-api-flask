@@ -57,6 +57,17 @@ def addnotes():
     db.session.add(note)
     db.session.commit()
     return jsonify({"Status":"Data added succesfully"})
+@app.route("/notes/<int:noteid>",methods=["PUT"])
+@jwt_required()
+def update(noteid):
+    data=request.get_json()
+    note = Note.query.get(noteid)
+    if note:
+        note.title = data["title"]
+        note.done=data["done"]
+        db.session.commit()
+        return jsonify({"status":"updated","updated_value":{"id":note.id,"title":note.title,"done":note.done}})
+    return jsonify({"Status":f" note id {noteid} not found in database"}),404
 with app.app_context():
     db.create_all()
 if __name__=="__main__":
