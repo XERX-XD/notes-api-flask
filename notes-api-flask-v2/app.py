@@ -57,6 +57,7 @@ def addnotes():
     db.session.add(note)
     db.session.commit()
     return jsonify({"Status":"Data added succesfully"})
+#update
 @app.route("/notes/<int:noteid>",methods=["PUT"])
 @jwt_required()
 def update(noteid):
@@ -68,7 +69,7 @@ def update(noteid):
         db.session.commit()
         return jsonify({"status":"updated","updated_value":{"id":note.id,"title":note.title,"done":note.done}})
     return jsonify({"Status":f" note id {noteid} not found in database"}),404
-
+#see first one
 @app.route("/notes/<int:noteid>",methods=["GET"])
 @jwt_required()
 def getsingle(noteid):
@@ -76,6 +77,16 @@ def getsingle(noteid):
     if note:
         return jsonify({"id":note.id,"title":note.title,"done":note.done})
     return jsonify({"Status":f" note id {noteid} not found in database"}),404
+
+@app.route("/notes/<int:noteid>",methods=["DELETE"])
+@jwt_required()
+def delnote(noteid):
+    note = Note.query.get(noteid)
+    if note:
+        db.session.delete(note)
+        db.session.commit()
+        return jsonify({"Status":f" note {note.title} deleted from database"})
+    return jsonify({"Status":f"note id {noteid} not found in database"}),404
 with app.app_context():
     db.create_all()
 if __name__=="__main__":
